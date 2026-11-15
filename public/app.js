@@ -26,7 +26,28 @@ function persist(next) {
 function empty(title,detail) {return `<div class="empty"><h3>${title}</h3><p>${detail}</p></div>`;}
 function render() {
   if(page==='assessments.html') renderAssessments();
-  else app.innerHTML=`<section class="panel"><h2>Your workspace is ready</h2><p>Start with a classroom checkpoint. Your records stay in this browser.</p><a class="button" href="assessments.html">Add an assessment</a></section>`;
+  else if(page==='insights.html') renderInsights();
+  else renderOverview();
+}
+function metrics() {
+  const stats=summarize(records);
+  return `<div class="cards"><section class="card"><p class="muted">Assessments recorded</p><strong class="metric">${stats.count}</strong><p class="hint">Individual learning checkpoints</p></section><section class="card"><p class="muted">Mean assessment score</p><strong class="metric">${pct(stats.mean)}</strong><p class="hint">Equal weight for every assessment</p></section><section class="card"><p class="muted">Learners represented</p><strong class="metric">${stats.learners}</strong><p class="hint">Distinct aliases in this workspace</p></section></div>`;
+}
+function topicsMarkup() {
+  return byTopic(records).map(t=>`<div class="topic"><div class="topic-head"><strong>${escape(t.topic)}</strong><strong>${pct(t.mean)}</strong></div><div class="bar" role="img" aria-label="${escape(t.topic)}: mean score ${pct(t.mean)}"><span style="width:${t.mean}%"></span></div><p class="hint">${t.count} assessments · ${t.learners} learners · ${t.review} below 60%</p></div>`).join('') || empty('Topic patterns will appear here','Add assessments to compare topics.');
+}
+function renderOverview() {
+  const stats=summarize(records);
+  app.innerHTML=`<div class="actions" style="margin-bottom:24px"><a class="button" href="assessments.html">+ Add assessment</a><a class="button secondary" href="insights.html">Explore insights →</a></div>${metrics()}
+  ${!records.length?'<div class="notice">Welcome to your empty workspace. Add a checkpoint or load synthetic demo data from Assessments to explore.</div>':''}
+  <div class="two-col"><section class="panel"><div class="panel-head"><h2>How are topics landing?</h2><span class="tag">Lowest mean first</span></div>${topicsMarkup()}</section>
+  <section class="panel"><p class="eyebrow">Your next teaching move</p><h2>${stats.review?'Make room for a check-in.':records.length?'Keep the conversation going.':'Start with one checkpoint.'}</h2><p class="muted">${stats.review?`${stats.review} of ${stats.count} assessments scored below 60%. Review these alongside your classroom observations.`:records.length?'No recorded assessments are below 60%. Scores alone do not show the full picture; invite learners to explain their thinking.':'A quick quiz, an exit ticket, or a practice task can help you choose what to revisit.'}</p><a href="insights.html">Review learning signals →</a><p class="privacy">The 60% threshold is a fixed demo heuristic, not a diagnosis or a grading policy.</p></section></div>
+  <section class="panel" style="margin-top:24px"><div class="panel-head"><h2>Recent checkpoints</h2><a href="assessments.html">View all records →</a></div>${records.length?`<div class="table-wrap"><table><thead><tr><th scope="col">Learner</th><th scope="col">Topic</th><th scope="col">Date</th><th scope="col">Score</th></tr></thead><tbody>${filterRecords(records).slice(0,5).map(r=>`<tr><td>${escape(r.learner)}</td><td>${escape(r.topic)}</td><td>${r.date}</td><td>${pct(percentage(r))}</td></tr>`).join('')}</tbody></table></div>`:empty('No checkpoints yet','Your five most recent assessments will appear here.')}</section>`;
+}
+function renderInsights() {
+  const review=filterRecords(records).filter(r=>percentage(r)<60);
+  app.innerHTML=`${metrics()}<div class="two-col"><section class="panel"><div class="panel-head"><h2>Topic snapshot</h2><span class="tag">All recorded dates</span></div>${topicsMarkup()}</section><section class="panel"><p class="eyebrow">How to read this</p><h2>Evidence, with context.</h2><p class="muted">Each assessment is converted to a percentage. Topic means average those percentages with equal weight; a 10-point quiz counts as much as a 20-point quiz.</p><p class="muted">Repeat assessments are included. Different task difficulty and small samples can affect comparisons. Check the assessment count before drawing conclusions.</p><p class="privacy">Aliases are matched without case sensitivity. Spelling variations count as separate learners or topics.</p></section></div>
+  <section class="panel" style="margin-top:24px"><div class="panel-head"><div><h2>Check-in queue</h2><p class="muted">Individual assessments below 60%, newest first. A prompt for conversation.</p></div><span class="tag support">${review.length} checkpoints</span></div>${review.length?`<div class="table-wrap"><table><thead><tr><th scope="col">Learner</th><th scope="col">Topic</th><th scope="col">Date</th><th scope="col">Score</th><th scope="col">Suggested next step</th></tr></thead><tbody>${review.map(r=>`<tr><td>${escape(r.learner)}</td><td>${escape(r.topic)}</td><td>${r.date}</td><td>${pct(percentage(r))}</td><td>Review one example together</td></tr>`).join('')}</tbody></table></div>`:empty(records.length?'No checkpoints below 60%':'No evidence to review yet',records.length?'Keep checking understanding through conversation and practice.':'Add assessments to build your first topic snapshot.')}</section>`;
 }
 function renderAssessments() {
   app.innerHTML=`<div class="two-col"><section class="panel"><p class="eyebrow">New checkpoint</p><h2>Add an assessment</h2><p class="muted">Use a learner alias, not a full name. Every checkpoint is weighted equally.</p>
