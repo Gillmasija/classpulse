@@ -14,16 +14,16 @@ Accessible frontend forms, responsive layouts, data validation, aggregation with
 
 ## Acceptance criteria
 
-- [ ] Navigate all three pages using keyboard and at narrow mobile widths.
-- [ ] Add an assessment with alias, topic, date, score and maximum; persist after reload.
-- [ ] Reject invalid scores, blank fields, and invalid/future dates with actionable feedback.
-- [ ] Search/filter records and remove a selected record after confirmation.
-- [ ] Show assessment count, mean assessment percentage and distinct learner count.
-- [ ] Group percentages by topic and explain the below-60% review threshold.
-- [ ] Load synthetic demo data explicitly; show useful empty and storage-error states.
-- [ ] Export filtered records as safe CSV; print insights; reset only after confirmation.
-- [ ] Pass domain tests, static lint, production build, and browser journey checks.
-- [ ] Document setup, calculations, limitations, data privacy, and verification results.
+- [x] Navigate all three pages using keyboard and at narrow mobile widths.
+- [x] Add an assessment with alias, topic, date, score and maximum; persist after reload.
+- [x] Reject invalid scores, blank fields, and invalid/future dates with actionable feedback.
+- [x] Search/filter records and remove a selected record after confirmation.
+- [x] Show assessment count, mean assessment percentage and distinct learner count.
+- [x] Group percentages by topic and explain the below-60% review threshold.
+- [x] Load synthetic demo data explicitly; show useful empty and storage-error states.
+- [x] Export filtered records as safe CSV; print insights; reset only after confirmation.
+- [x] Pass domain tests, static lint, production build, and browser journey checks.
+- [x] Document setup, calculations, limitations, data privacy, and verification results.
 
 ## Design decisions
 
