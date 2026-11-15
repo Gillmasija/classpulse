@@ -53,4 +53,5 @@ This plan was committed before implementation; each implementation step was chec
 9. Safe CSV export, data reset, and print report.
 10. Acceptance verification, CI checks, screenshots, and documentation.
 
-Additional focused commits fix narrow-screen overflow and print stylesheet precedence discovered in browser QA. Implementation remains on `feat/classpulse`; default `main` contains setup only pending review. No deployment URL is claimed. Portfolio integration follows a verified merge by Gillian.
+Additional focused commits fix narrow-screen overflow and print stylesheet precedence discovered in browser QA. Implementation remains on `feat/classpulse`; PR #1 was merged early with setup and the brief only; the completed app is delivered in the follow-up PR. No deployment URL is claimed. Portfolio integration follows a verified merge by Gillian.
+
