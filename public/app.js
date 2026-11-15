@@ -1,5 +1,6 @@
 import { today, validate, percentage, summarize, byTopic, filterRecords } from './model.js';
 import { load, save, demoRecords } from './storage.js';
+import { toCsv } from './export.js';
 
 const app=document.querySelector('#app');
 const banner=document.querySelector('#storage-message');
@@ -28,6 +29,20 @@ function render() {
   if(page==='assessments.html') renderAssessments();
   else if(page==='insights.html') renderInsights();
   else renderOverview();
+  app.insertAdjacentHTML('beforeend',`<section id="data-controls" class="panel" style="margin-top:24px"><div class="panel-head"><div><h2>Your data, your browser</h2><p class="muted">Export a copy before clearing storage. CSV import is not supported in this version.</p></div><div class="actions"><button class="secondary" id="export-data">Export ${page==='assessments.html'?'filtered records':'all records'}</button>${page==='insights.html'?'<button class="secondary" id="print-report">Print report</button>':''}<button class="danger" id="reset-data">Reset data</button></div></div><p id="export-status" class="hint" role="status"></p></section>`);
+  document.querySelector('#export-data').onclick=()=>{
+    const exported=page==='assessments.html'?filterRecords(records,query,selectedTopic):records;
+    if(!exported.length){document.querySelector('#export-status').textContent='No matching records to export. Add data or adjust your filters.';return;}
+    const url=URL.createObjectURL(new Blob([toCsv(exported)],{type:'text/csv;charset=utf-8;'}));
+    const link=document.createElement('a');link.href=url;link.download=`classpulse-${today()}.csv`;link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    document.querySelector('#export-status').textContent=`Export prepared: ${exported.length} assessments. Check your browser downloads.`;
+  };
+  document.querySelector('#print-report')?.addEventListener('click',()=>window.print());
+  document.querySelector('#reset-data').onclick=()=>confirmAction('Clear all ClassPulse data?','This clears only ClassPulse records in this browser, including unreadable data. Export first if needed. This cannot be undone.',()=>{
+    const result=save(storage,[]);message(result.error);
+    if(!result.error){records=[];blocked=false;query='';selectedTopic='';render();document.querySelector('#reset-data').focus();}
+  });
 }
 function metrics() {
   const stats=summarize(records);

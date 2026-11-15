@@ -1,1 +1,10 @@
-/* Print layout is completed with the report milestone. */
+@page{margin:16mm}
+header nav,.actions,button,.skip,#data-controls,footer{display:none!important}
+body{background:white;color:black;font-size:11pt}
+.wrap{max-width:none;padding-inline:0}
+main{padding-block:20px}
+.panel,.card{border:1px solid #aaa;box-shadow:none;padding:16px;break-inside:avoid}
+.two-col{display:block}.two-col>.panel{margin-bottom:16px}
+.cards{grid-template-columns:repeat(3,1fr)}
+.bar{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+table{font-size:10pt}.table-wrap{overflow:visible}tr{break-inside:avoid}
