@@ -32,4 +32,3 @@ Light cream surfaces, ink text, teal actions, labeled compact progress bars. Sem
 ## Delivery
 
 Follow the ten milestones in README.md. Default branch contains setup only. All implementation stays on `feat/classpulse` and the same draft PR until acceptance checks pass. Portfolio integration follows only after Gillian merges the project PR.
-
